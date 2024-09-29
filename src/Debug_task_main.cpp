@@ -192,14 +192,14 @@ static void subproc_debug_menu() {
     int debug_max_stack_size = DEBUG_STACK_SIZE - uxTaskGetStackHighWaterMark(tskHndl_debug);
 
 
-    P_DBG_SERIAL->println("***** Stack Coms *****");
-    P_DBG_SERIAL->printf("Can   : %d byte / %d byte (rest: %d[%%])\n",
+    P_DBG_SERIAL->println("***** Stack Consumption *****");
+    P_DBG_SERIAL->printf("Can   : %d byte / %d byte (consumption: %d[%%])\n",
                   can_max_stack_size, CAN_STACK_SIZE, can_max_stack_size*100/CAN_STACK_SIZE);
-    P_DBG_SERIAL->printf("RS485 : %d byte / %d byte (rest: %d[%%])\n",
+    P_DBG_SERIAL->printf("RS485 : %d byte / %d byte (consumption: %d[%%])\n",
                   rs485_max_stack_size, RS485_STACK_SIZE, rs485_max_stack_size*100/RS485_STACK_SIZE);
-    P_DBG_SERIAL->printf("UI    : %d byte / %d byte (rest: %d[%%])\n",
+    P_DBG_SERIAL->printf("UI    : %d byte / %d byte (consumption: %d[%%])\n",
                   ui_max_stack_size, UI_STACK_SIZE, ui_max_stack_size*100/UI_STACK_SIZE);
-    P_DBG_SERIAL->printf("Debug : %d byte / %d byte (rest: %d[%%])\n",
+    P_DBG_SERIAL->printf("Debug : %d byte / %d byte (consumption: %d[%%])\n",
                   debug_max_stack_size, DEBUG_STACK_SIZE, debug_max_stack_size*100/DEBUG_STACK_SIZE);
   }
     break;
