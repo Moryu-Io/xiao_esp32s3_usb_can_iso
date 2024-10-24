@@ -19,12 +19,26 @@ TaskHandle_t tskHndl_debug;
 void main_can(void *params){
   uint32_t loop_tick = (int)configTICK_RATE_HZ / LOOP_RATE_CAN_HZ;
 
+	CanFrame txFrame = { 0 };
+	txFrame.identifier = 0x123; // Default OBD2 address;
+	txFrame.extd = 0;
+	txFrame.data_length_code = 8;
+	txFrame.data[0] = 2;
+	txFrame.data[1] = 1;
+	txFrame.data[2] = 3;
+	txFrame.data[3] = 0xAA;    // Best to use 0xAA (0b10101010) instead of 0
+	txFrame.data[4] = 0xAA;    // CAN works better this way as it needs
+	txFrame.data[5] = 0xAA;    // to avoid bit-stuffing
+	txFrame.data[6] = 0xAA;
+	txFrame.data[7] = 0xAA;
+
+
   auto xLastWakeTime = xTaskGetTickCount();
   while (true) {
     vTaskDelayUntil(&xLastWakeTime, loop_tick);
     DEBUG_PRINT_PRC_START(DBG_PRC_ID::CAN_MAIN);  // 処理時間計測開始
 
-
+    ESP32Can.writeFrame(txFrame); 
 
     DEBUG_PRINT_PRC_FINISH(DBG_PRC_ID::CAN_MAIN); // 処理時間計測停止
   }
