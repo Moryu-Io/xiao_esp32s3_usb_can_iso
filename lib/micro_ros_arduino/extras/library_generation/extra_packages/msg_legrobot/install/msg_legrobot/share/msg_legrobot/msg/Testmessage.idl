@@ -1,0 +1,14 @@
+// generated from rosidl_adapter/resource/msg.idl.em
+// with input from msg_legrobot/msg/Testmessage.msg
+// generated code does not contain a copyright notice
+
+
+module msg_legrobot {
+  module msg {
+    struct Testmessage {
+      int32 x;
+
+      float y;
+    };
+  };
+};

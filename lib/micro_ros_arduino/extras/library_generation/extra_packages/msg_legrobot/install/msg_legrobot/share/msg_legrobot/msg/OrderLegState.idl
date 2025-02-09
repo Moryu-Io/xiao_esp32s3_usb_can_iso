@@ -1,0 +1,35 @@
+// generated from rosidl_adapter/resource/msg.idl.em
+// with input from msg_legrobot/msg/OrderLegState.msg
+// generated code does not contain a copyright notice
+
+
+module msg_legrobot {
+  module msg {
+    typedef float float__3[3];
+    struct OrderLegState {
+      uint32 mode_lf;
+
+      float__3 force_lf;
+
+      float__3 pos_lf;
+
+      uint32 mode_rf;
+
+      float__3 force_rf;
+
+      float__3 pos_rf;
+
+      uint32 mode_lr;
+
+      float__3 force_lr;
+
+      float__3 pos_lr;
+
+      uint32 mode_rr;
+
+      float__3 force_rr;
+
+      float__3 pos_rr;
+    };
+  };
+};

@@ -1,0 +1,12 @@
+uint32 mode_lf
+float32[3] force_lf
+float32[3] pos_lf
+uint32 mode_rf
+float32[3] force_rf
+float32[3] pos_rf
+uint32 mode_lr
+float32[3] force_lr
+float32[3] pos_lr
+uint32 mode_rr
+float32[3] force_rr
+float32[3] pos_rr

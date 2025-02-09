@@ -1,0 +1,13 @@
+float32[3] force_lf
+float32[3] pos_lf
+float32[3] force_rf
+float32[3] pos_rf
+float32[3] force_lr
+float32[3] pos_lr
+float32[3] force_rr
+float32[3] pos_rr
+float32[3] pos_body
+float32[3] vel_body
+float32[3] acc_imu
+float32[3] gyro_imu
+uint32 fault

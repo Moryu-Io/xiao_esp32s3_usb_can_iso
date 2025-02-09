@@ -1,0 +1,4 @@
+source;share/msg_legrobotrx/environment/ament_prefix_path.sh
+source;share/msg_legrobotrx/environment/library_path.sh
+source;share/msg_legrobotrx/environment/path.sh
+source;share/msg_legrobotrx/environment/pythonpath.sh
