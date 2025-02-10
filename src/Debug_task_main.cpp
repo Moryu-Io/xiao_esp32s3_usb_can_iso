@@ -64,6 +64,8 @@ void prepare_task() {
 void main(void *params) {
   uint32_t loop_tick = (int)configTICK_RATE_HZ / LOOP_RATE_DEBUG_HZ;
 
+  prepare_task();
+
   IS_DEBUG_TASK_START = true;
 
   auto xLastWakeTime = xTaskGetTickCount();

@@ -6,13 +6,14 @@ import numpy as np
 import csv
 
 SaveFolderPath = "./"
-COMnum = "COM8"
+COMnum = "/dev/ttyACM1"
 
 CNT2MS = 1/8/1000
 ID2PRCNAME = {
     0x10:"CAN_MAIN",
     0x20:"RS485_MAIN",
     0x30:"UI_MAIN",
+    0x40:"RMT_MAIN",
     0xF0:"DBG_MAIN",
 }
 
@@ -68,6 +69,7 @@ def plot_timing_graph(res_dic):
 
 def main():
     ser = serial.Serial(COMnum, 460800, timeout=1)
+    ser.flush()
     start_test(ser)
 
     start_time = time.time()    # タイムアウト処理用

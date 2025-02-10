@@ -27,18 +27,20 @@ static constexpr uint8_t RS485_TX = D10;
 #define CAN_STACK_SIZE    (4096)
 #define RS485_STACK_SIZE  (4096)
 #define UI_STACK_SIZE     (4096)
+#define RMT_STACK_SIZE    (16384)
 #define DEBUG_STACK_SIZE  (4096)
 
 static constexpr uint32_t  LOOP_RATE_CAN_HZ   = 1000;
 static constexpr uint32_t  LOOP_RATE_RS485_HZ = 200;
 static constexpr uint32_t  LOOP_RATE_UI_HZ    = 100;
+static constexpr uint32_t  LOOP_RATE_RMT_HZ   = 100;
 static constexpr uint32_t  LOOP_RATE_DEBUG_HZ = 100;
 
 /************************ RTOS設定 ここまで ************************/
 
 /************************ DEBUG PRINT設定 ここから ************************/
-#define DEBUG_SERIAL_MOD (Serial)
-//#define DEBUG_SERIAL_MOD (Serial1)
+//#define DEBUG_SERIAL_MOD (Serial)
+#define DEBUG_SERIAL_MOD (Serial1)
 
 #include "Debug_task_main.hpp"
 template <typename... Args>
@@ -57,12 +59,13 @@ void debug_printf(const char *format, Args const &...args) {
 /************************ DEBUG PRINT設定 ここまで ************************/
 
 /************************ DEBUG TASK負荷測定設定 ここから ************************/
-#define ENABLE_PRINT_PROCESS_LOAD (1)
+#define ENABLE_PRINT_PROCESS_LOAD (0)
 
 enum DBG_PRC_ID {
   CAN_MAIN   = 0x10,
   RS485_MAIN = 0x20,
   UI_MAIN    = 0x30,
+  RMT_MAIN   = 0x40,
   DBG_MAIN   = 0xF0,
 };
 
