@@ -60,10 +60,14 @@ void main_ui(void *params){
   }
 }
 
-
-void setup() {
-
-
+/**
+ * @brief init function
+ * @note loopTask外で実行される
+ * @note cores/esp32/main.cpp -> app_main関数 ->
+ *       cores/esp32/esp32-hal-misc.c -> initArduino関数内で呼び出し
+ * 
+ */
+void init(){
   // general purpose timer (8MHz count) 
   debug_gp_timer = timerBegin(0, 10, true);
   init_debug_timer(debug_gp_timer);
@@ -90,18 +94,25 @@ void setup() {
   digitalWrite(PIN::PWR_COM_DEVICE, HIGH);
 
   // Task Config
-  //DEBUG::prepare_task();
-  //RMT::prepare_task();
-  //Serial.begin(460800);  // USB
+  DEBUG::prepare_task();
+  RMT::prepare_task();
+  Serial.begin(460800);  // USB
 
   xTaskCreatePinnedToCore(main_can,      "CAN", CAN_STACK_SIZE,   NULL, 4, &tskHndl_can,   APP_CPU_NUM);
   xTaskCreatePinnedToCore(main_rs485,  "RS485", RS485_STACK_SIZE, NULL, 3, &tskHndl_rs485, APP_CPU_NUM);
   xTaskCreatePinnedToCore(main_ui,        "UI", UI_STACK_SIZE,    NULL, 2, &tskHndl_ui,    PRO_CPU_NUM);
   xTaskCreatePinnedToCore(RMT::main,     "RMT", RMT_STACK_SIZE,   NULL, 3, &tskHndl_rmt,   PRO_CPU_NUM);
   xTaskCreatePinnedToCore(DEBUG::main, "DEBUG", DEBUG_STACK_SIZE, NULL, 1, &tskHndl_debug, PRO_CPU_NUM);
+
 }
 
-void loop() {
-}
+/**
+ * @brief setup function
+ * @note loopTask内の最初で1回実行されることに注意
+ * 
+ */
+void setup() {}
+
+void loop() {}
 
 

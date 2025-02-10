@@ -122,7 +122,6 @@ void prepare_task() {
  */
 void main(void *params) {
   uint32_t loop_tick = (int)configTICK_RATE_HZ / LOOP_RATE_RMT_HZ;
-  RMT::prepare_task();
   
 
   auto xLastWakeTime = xTaskGetTickCount();
