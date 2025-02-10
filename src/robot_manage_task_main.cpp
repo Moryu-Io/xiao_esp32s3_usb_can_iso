@@ -17,6 +17,18 @@
 
 namespace RMT {
 
+bool is_microros_init_successful = false;
+enum ConnectionStatus{
+  WAITING_AGENT,
+  AVAILABLE_AGENT,
+  CONNECTED,
+  DISCONNECTED,
+  UNKNOWN,
+};
+ConnectionStatus UROS_AGENT_STATUS = WAITING_AGENT;
+uint32_t U32_UROS_PING_COUNTER_MATCH = 15;  // この回数に一回、Pingを打つ
+uint32_t U32_UROS_PING_COUNTER       = 0; // Pingを打つまでのカウンター
+
 // publisher
 rcl_publisher_t pb_info_leg_state;
 msg_legrobot__msg__InfoLegState msg_pb_info_leg_state;
@@ -87,11 +99,19 @@ static void destroy_microros_entities(){
   rmw_uros_set_context_entity_destroy_session_timeout(rmw_context, 0);
 
   RCSOFTCHECK(rcl_publisher_fini(&pb_info_leg_state, &node));
-  RCSOFTCHECK(rcl_subscription_fini(&sb_odr_command, &node));
-  RCSOFTCHECK(rcl_subscription_fini(&sb_odr_leg_state, &node));
+  //RCSOFTCHECK(rcl_subscription_fini(&sb_odr_command, &node));
+  //RCSOFTCHECK(rcl_subscription_fini(&sb_odr_leg_state, &node));
   RCSOFTCHECK(rclc_executor_fini(&executor));
   RCSOFTCHECK(rcl_node_fini(&node));
   RCSOFTCHECK(rclc_support_fini(&support));
+}
+
+
+void routine_ros(){
+  msg_pb_info_leg_state.fault++;
+  RCSOFTCHECK(rcl_publish(&pb_info_leg_state, &msg_pb_info_leg_state, NULL));
+
+  rclc_executor_spin_some(&executor, RCL_MS_TO_NS(1));
 }
 
 
@@ -102,15 +122,14 @@ static void destroy_microros_entities(){
 void prepare_task() {
   set_microros_transports();
 
-  while(true) {
-    if(RMW_RET_OK == rmw_uros_ping_agent(50, 2)) {
+  for(int i=0;i<5;i++){
+    if(RMW_RET_OK == rmw_uros_ping_agent(5, 2)) {
       create_microros_entities();
+      UROS_AGENT_STATUS = CONNECTED;
       break;
     } else {
-      // 何もしない
+      UROS_AGENT_STATUS = WAITING_AGENT;
     }
-    // vTaskDelay(500);
-    delay(500);
   }
 
 }
@@ -129,10 +148,46 @@ void main(void *params) {
     vTaskDelayUntil(&xLastWakeTime, loop_tick);
     DEBUG_PRINT_PRC_START(DBG_PRC_ID::RMT_MAIN);  // 処理時間計測開始
 
-    msg_pb_info_leg_state.fault++;
-    RCSOFTCHECK(rcl_publish(&pb_info_leg_state, &msg_pb_info_leg_state, NULL));
 
-    rclc_executor_spin_some(&executor, RCL_MS_TO_NS(1));
+    switch (UROS_AGENT_STATUS)
+    {
+    case WAITING_AGENT:
+      /* 切断後のAgentからのPing応答待ち状態 */
+      DEBUG_PRINT_STR_RMT("[RMT]waiting uros agent response\n");
+      //set_microros_transports();
+      if(RMW_RET_OK == rmw_uros_ping_agent(5, 2)){
+        UROS_AGENT_STATUS = AVAILABLE_AGENT;
+      }
+      break;
+    case AVAILABLE_AGENT:
+      DEBUG_PRINT_STR_RMT("[RMT]Recreate uros entities\n");
+      create_microros_entities();
+      UROS_AGENT_STATUS = CONNECTED;
+      break;
+    case CONNECTED:
+      if(U32_UROS_PING_COUNTER >= U32_UROS_PING_COUNTER_MATCH){
+        U32_UROS_PING_COUNTER = 0;
+        DEBUG_PRINT_STR_RMT("[RMT]ping uros\n");
+        if(RMW_RET_OK == rmw_uros_ping_agent(5, 2)){
+          routine_ros();
+        } else {
+          DEBUG_PRINT_STR_RMT("[RMT]uros disconnect\n");
+          UROS_AGENT_STATUS = DISCONNECTED;
+        }
+      } else {
+          routine_ros();
+        U32_UROS_PING_COUNTER++;
+      }
+      break;
+    case DISCONNECTED:
+      DEBUG_PRINT_STR_RMT("[RMT]destroy uros entities\n");
+      destroy_microros_entities();
+      UROS_AGENT_STATUS = WAITING_AGENT;
+      break;
+    default:
+      break;
+    }
+
     DEBUG_PRINT_PRC_FINISH(DBG_PRC_ID::RMT_MAIN); // 処理時間計測停止
   }
 }
