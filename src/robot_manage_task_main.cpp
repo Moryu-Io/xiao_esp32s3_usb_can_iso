@@ -34,7 +34,6 @@ rcl_node_t node;
 rcl_timer_t timer;
 #define RCCHECK(fn) { rcl_ret_t temp_rc = fn; if((temp_rc != RCL_RET_OK)){error_loop();}}
 #define RCSOFTCHECK(fn) { rcl_ret_t temp_rc = fn; if((temp_rc != RCL_RET_OK)){}}
-  
 
 void error_loop(){
   while(1){
@@ -47,6 +46,7 @@ void sb_order_cmd_callback(const void* msgin){
 }
 
 void sb_order_legstate_callback(const void* msgin){
+  DEBUG_PRINT_STR_RMT("[RMT]OrderLegState msg recieve\n");
 
 }
 
@@ -132,7 +132,7 @@ void main(void *params) {
     msg_pb_info_leg_state.fault++;
     RCSOFTCHECK(rcl_publish(&pb_info_leg_state, &msg_pb_info_leg_state, NULL));
 
-    //rclc_executor_spin_some(&executor, RCL_MS_TO_NS(1));
+    rclc_executor_spin_some(&executor, RCL_MS_TO_NS(1));
     DEBUG_PRINT_PRC_FINISH(DBG_PRC_ID::RMT_MAIN); // 処理時間計測停止
   }
 }

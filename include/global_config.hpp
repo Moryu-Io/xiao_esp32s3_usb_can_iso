@@ -33,7 +33,7 @@ static constexpr uint8_t RS485_TX = D10;
 static constexpr uint32_t  LOOP_RATE_CAN_HZ   = 1000;
 static constexpr uint32_t  LOOP_RATE_RS485_HZ = 200;
 static constexpr uint32_t  LOOP_RATE_UI_HZ    = 100;
-static constexpr uint32_t  LOOP_RATE_RMT_HZ   = 100;
+static constexpr uint32_t  LOOP_RATE_RMT_HZ   = 300;
 static constexpr uint32_t  LOOP_RATE_DEBUG_HZ = 100;
 
 /************************ RTOS設定 ここまで ************************/
@@ -55,6 +55,12 @@ void debug_printf(const char *format, Args const &...args) {
 
 //#define DEBUG_PRINT_STR_CAN(fmt) debug_printf(fmt)
 #define DEBUG_PRINT_STR_CAN(fmt)
+
+
+//#define DEBUG_PRINT_RMT(fmt, ...) debug_printf(fmt, __VA_ARGS__)
+#define DEBUG_PRINT_RMT(fmt, ...)
+//#define DEBUG_PRINT_STR_RMT(fmt) debug_printf(fmt)
+#define DEBUG_PRINT_STR_RMT(fmt)
 
 /************************ DEBUG PRINT設定 ここまで ************************/
 
