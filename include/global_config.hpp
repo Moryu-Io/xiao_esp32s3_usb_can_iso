@@ -31,7 +31,7 @@ static constexpr uint8_t RS485_TX = D10;
 #define DEBUG_STACK_SIZE  (4096)
 
 static constexpr uint32_t  LOOP_RATE_CAN_HZ   = 1000;
-static constexpr uint32_t  LOOP_RATE_RS485_HZ = 200;
+static constexpr uint32_t  LOOP_RATE_RS485_HZ = 1;
 static constexpr uint32_t  LOOP_RATE_UI_HZ    = 100;
 static constexpr uint32_t  LOOP_RATE_RMT_HZ   = 300;
 static constexpr uint32_t  LOOP_RATE_DEBUG_HZ = 100;
@@ -56,6 +56,11 @@ void debug_printf(const char *format, Args const &...args) {
 //#define DEBUG_PRINT_STR_CAN(fmt) debug_printf(fmt)
 #define DEBUG_PRINT_STR_CAN(fmt)
 
+#define DEBUG_PRINT_RS485(fmt, ...) debug_printf(fmt, __VA_ARGS__)
+//#define DEBUG_PRINT_RS485(fmt, ...)
+
+#define DEBUG_PRINT_STR_RS485(fmt) debug_printf(fmt)
+//#define DEBUG_PRINT_STR_RS485(fmt)
 
 //#define DEBUG_PRINT_RMT(fmt, ...) debug_printf(fmt, __VA_ARGS__)
 #define DEBUG_PRINT_RMT(fmt, ...)

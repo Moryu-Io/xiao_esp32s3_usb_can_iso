@@ -5,6 +5,7 @@
 // user code
 #include "global_config.hpp"
 #include "robot_manage_task_main.hpp"
+#include "rs485_imu_task_main.hpp"
 #include "Debug_task_main.hpp"
 #include "util_gptimer.hpp"
 
@@ -31,18 +32,6 @@ void main_can(void *params){
     
 
     DEBUG_PRINT_PRC_FINISH(DBG_PRC_ID::CAN_MAIN); // 処理時間計測停止
-  }
-}
-
-void main_rs485(void *params){
-  uint32_t loop_tick = (int)configTICK_RATE_HZ / LOOP_RATE_RS485_HZ;
-
-  auto xLastWakeTime = xTaskGetTickCount();
-  while (true) {
-    vTaskDelayUntil(&xLastWakeTime, loop_tick);
-    DEBUG_PRINT_PRC_START(DBG_PRC_ID::RS485_MAIN);  // 処理時間計測開始
-
-    DEBUG_PRINT_PRC_FINISH(DBG_PRC_ID::RS485_MAIN); // 処理時間計測停止
   }
 }
 
@@ -95,13 +84,14 @@ void init(){
 
   // Task Config
   DEBUG::prepare_task();
-  RMT::prepare_task();
+  RSI::prepare_task();
+  //RMT::prepare_task();
   Serial.begin(460800);  // USB
 
   xTaskCreatePinnedToCore(main_can,      "CAN", CAN_STACK_SIZE,   NULL, 4, &tskHndl_can,   APP_CPU_NUM);
-  xTaskCreatePinnedToCore(main_rs485,  "RS485", RS485_STACK_SIZE, NULL, 3, &tskHndl_rs485, APP_CPU_NUM);
+  xTaskCreatePinnedToCore(RSI::main,   "RS485", RS485_STACK_SIZE, NULL, 3, &tskHndl_rs485, APP_CPU_NUM);
   xTaskCreatePinnedToCore(main_ui,        "UI", UI_STACK_SIZE,    NULL, 2, &tskHndl_ui,    PRO_CPU_NUM);
-  xTaskCreatePinnedToCore(RMT::main,     "RMT", RMT_STACK_SIZE,   NULL, 3, &tskHndl_rmt,   PRO_CPU_NUM);
+  //xTaskCreatePinnedToCore(RMT::main,     "RMT", RMT_STACK_SIZE,   NULL, 3, &tskHndl_rmt,   PRO_CPU_NUM);
   xTaskCreatePinnedToCore(DEBUG::main, "DEBUG", DEBUG_STACK_SIZE, NULL, 1, &tskHndl_debug, PRO_CPU_NUM);
 
 }
