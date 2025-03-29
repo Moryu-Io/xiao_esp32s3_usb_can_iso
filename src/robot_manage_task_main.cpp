@@ -3,6 +3,7 @@
 // ローカル
 #include "global_config.hpp"
 #include "robot_manage_task_main.hpp"
+#include "rs485_imu_task_main.hpp"
 
 #include <micro_ros_arduino.h>
 #include <stdio.h>
@@ -108,7 +109,19 @@ static void destroy_microros_entities(){
 
 
 void routine_ros(){
-  msg_pb_info_leg_state.fault++;
+  RSI::st_imu now_imu = {};
+  RSI::get_now_imudata(now_imu);
+  msg_pb_info_leg_state.acc_imu[0] = now_imu.fl_acc[RSI::AxisXYZ::AX_X];
+  msg_pb_info_leg_state.acc_imu[1] = now_imu.fl_acc[RSI::AxisXYZ::AX_Y];
+  msg_pb_info_leg_state.acc_imu[2] = now_imu.fl_acc[RSI::AxisXYZ::AX_Z];
+  msg_pb_info_leg_state.gyro_imu[0] = now_imu.fl_gyro[RSI::AxisXYZ::AX_X];
+  msg_pb_info_leg_state.gyro_imu[1] = now_imu.fl_gyro[RSI::AxisXYZ::AX_X];
+  msg_pb_info_leg_state.gyro_imu[2] = now_imu.fl_gyro[RSI::AxisXYZ::AX_X];
+  // intead of angle
+  msg_pb_info_leg_state.pos_body[0] = now_imu.fl_ang[RSI::AxisRPY::AX_ROLL];
+  msg_pb_info_leg_state.pos_body[1] = now_imu.fl_ang[RSI::AxisRPY::AX_PITCH];
+  msg_pb_info_leg_state.pos_body[2] = now_imu.fl_ang[RSI::AxisRPY::AX_YAW];
+
   RCSOFTCHECK(rcl_publish(&pb_info_leg_state, &msg_pb_info_leg_state, NULL));
 
   rclc_executor_spin_some(&executor, RCL_MS_TO_NS(1));

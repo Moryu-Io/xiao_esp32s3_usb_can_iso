@@ -229,6 +229,9 @@ void process_inputchar() {
     case 't':
       subproc_debug_menu();
       break;
+    case 'i':
+      
+      break;
     default:
       break;
     }
