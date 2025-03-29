@@ -209,14 +209,12 @@ void CopeSensorData(uint32_t uiReg, uint32_t uiRegNum)
 }
 
 void AutoScanSensor(void)
-{
-	int i, iRetry;
-	
-	for(i = 0; i < sizeof(c_uiBaud)/sizeof(c_uiBaud[0]); i++)
+{	
+	for(int i = 0; i < sizeof(c_uiBaud)/sizeof(c_uiBaud[0]); i++)
 	{
 		Serial2.begin(c_uiBaud[i], SERIAL_8N1, PIN::RS485_RX, PIN::RS485_TX);
         Serial2.flush();
-		iRetry = 2;
+		int iRetry = 2;
 		s_cDataUpdate = 0;
 		do
 		{
